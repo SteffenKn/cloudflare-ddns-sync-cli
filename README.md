@@ -80,6 +80,10 @@ For example:
 
 ## Changelog
 
+### v0.0.3
+
+- 🐛 **Fix Other Functions When CDS is Not Configured**
+
 ### v0.0.2
 
 - 🐛 **Fix Sync When CDS is Not Configured**

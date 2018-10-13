@@ -115,7 +115,7 @@ function showConfig() {
   const currentConfiguration = getDdnsConfig();
 
   const configurationNotSet = currentConfiguration === undefined
-                           || currentConfiguration.auth.email === undefined;
+                           || currentConfiguration.auth === undefined;
   if (configurationNotSet) {
     console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
 
@@ -154,7 +154,7 @@ async function addRecords() {
   const ddnsConfig = getDdnsConfig();
 
   const configNotSet = ddnsConfig === undefined
-                    || ddnsConfig.auth.email === undefined;
+                    || ddnsConfig.auth === undefined;
   if (configNotSet) {
     console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
 
@@ -194,7 +194,7 @@ async function removeRecords() {
   const ddnsConfig = getDdnsConfig();
 
   const configNotSet = ddnsConfig === undefined
-                    || ddnsConfig.auth.email === undefined;
+                    || ddnsConfig.auth === undefined;
   if (configNotSet) {
     console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
 
