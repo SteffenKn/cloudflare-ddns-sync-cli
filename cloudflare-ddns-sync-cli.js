@@ -72,7 +72,7 @@ function sync() {
   const ddnsConfig = getDdnsConfig();
 
   const configNotSet = ddnsConfig === undefined
-                    || ddnsConfig.auth.email === undefined;
+                    || ddnsConfig.auth === undefined;
   if (configNotSet) {
     console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
 
