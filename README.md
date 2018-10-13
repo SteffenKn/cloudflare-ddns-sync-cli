@@ -1,4 +1,4 @@
-# Cloudflare-DDNS-Sync
+# Cloudflare-DDNS-Sync-CLI
 
 [![NPM](https://nodei.co/npm/cloudflare-ddns-sync-cli.png)](https://nodei.co/npm/cloudflare-ddns-sync-cli/)
 
@@ -79,6 +79,10 @@ For example:
 - **Copy the API Key**
 
 ## Changelog
+
+### v0.0.4
+
+- ✨ **Replace LowDB by Data-Store**
 
 ### v0.0.3
 

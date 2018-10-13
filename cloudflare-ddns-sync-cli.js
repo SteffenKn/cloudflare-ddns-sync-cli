@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 
+'use strict';
+
 // Readline
 const Readline = require('readline');
 
-//lowdb
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('cloudflare-config.json');
-const db = low(adapter);
-
-db.defaults({cloudflareConfig: {}})
-  .write()
+// CLI-Storage
+const Storage = require('data-store');
+const storage = new Storage({ name: 'cloudflareConfig' });
 
 // Cloudflare-DDNS-Sync
 const CloudflareDDNSSync = require("cloudflare-ddns-sync");
@@ -144,8 +141,7 @@ async function setConfig() {
     "records": records
   };
 
-  db.set('cloudflareConfig', ddnsConfig)
-    .write();
+  storage.set('cloudflareConfig', ddnsConfig);
 
   console.log(`Youre Configuration was successfully stored.`);
 }
@@ -184,8 +180,7 @@ async function addRecords() {
       return ddnsConfig.records.indexOf(record) == recordIndex;
   });
 
-  db.set('cloudflareConfig', ddnsConfig)
-    .write();
+  storage.set('cloudflareConfig', ddnsConfig);
 
   console.log('Records successfully added.');
 }
@@ -220,15 +215,13 @@ async function removeRecords() {
 
   ddnsConfig.records = records;
 
-  db.set('cloudflareConfig', ddnsConfig)
-    .write();
+  storage.set('cloudflareConfig', ddnsConfig);
 
   console.log('Records successfully removed.')
 }
 
 function getDdnsConfig() {
-  return db.get('cloudflareConfig')
-            .value();
+  return storage.get('cloudflareConfig');
 }
 
 async function getEmail(readline) {
