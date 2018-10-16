@@ -2,6 +2,9 @@
 
 [![NPM](https://nodei.co/npm/cloudflare-ddns-sync-cli.png)](https://nodei.co/npm/cloudflare-ddns-sync-cli/)
 
+You may also have a look at Cloudflare-DDNS-Sync:
+[![NPM](https://nodei.co/npm/cloudflare-ddns-sync.png)](https://nodei.co/npm/cloudflare-ddns-sync/)
+
 ## Overview
 
 Cloudflare-DDNS-Sync-CLI is a cli for the NPM package [Cloudflare-DDNS-Sync](https://www.npmjs.com/package/cloudflare-ddns-sync).
@@ -37,11 +40,24 @@ If you run the command with a valid ip like `cds sync 8.8.8.8` Cloudflare-DDNS-S
 
 ## Commands
 
+- cds help
+- cds default
 - cds configuration
 - cds config
 - cds addRecords
 - cds removeRecords
-- cds sync <ip>
+- cds sync [ip]
+- cds syncOnIpChange
+
+### cds help
+
+Shows everything that Cloudflare-DDNS-Sync-CLI can do.
+
+### cds default
+
+Set a default command. When a default command is set 'cds' can be used instead of that command-
+
+For example when setting 'syncOnIpChange' as default, 'cds' will do the same as 'cds syncOnIpChange'.
 
 ### cds configuration
 
@@ -61,12 +77,18 @@ Remove a record from the existing configuration
 
 ### cds sync <ip>
 
-Sync the DNS Record. If the ip is not set it will simply use your external ip.
+Sync the DNS Records. If the ip is not set it will simply use your external ip.
 
 For example:
 ```
   cds sync 8.8.8.8
 ```
+
+### cds syncOnIpChange
+
+Sync the DNS Records as soon as the external ip differs from the ip set in the configured DNS Records.
+
+> Note: This will stop as soon as the terminal session ends, or when the command gets aborted.
 
 ## Get Your Cloudflare API Key
 
@@ -79,6 +101,13 @@ For example:
 - **Copy the API Key**
 
 ## Changelog
+
+### v0.0.5
+
+- ✨ **Add syncOnIpChange Functionality**
+- ✨ **Add default Functionality**
+- ✨ **Add Help Command**
+- 💄 Improve Code Quality
 
 ### v0.0.4
 

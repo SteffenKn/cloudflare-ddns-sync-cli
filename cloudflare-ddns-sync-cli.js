@@ -18,27 +18,41 @@ const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[
 const whitespaceRegex = /\s+/g;
 
 // Variables
-const [ , , ...args] = process.argv;
+const [, , cmd, ...args] = process.argv;
+let defaultCommand = storage.get('defaultCommand');
 
-evaluateJob();
+evaluateJob(cmd);
 
-function evaluateJob() {
-  const configurationSelected = args[0] === 'configuration';
-  const configSelected = args[0] === 'config';
-  const syncSelected = args[0] === 'sync';
-  const addRecordSelected = args[0] === 'addRecords';
-  const removeRecordSelected = args[0] === 'removeRecords';
+function evaluateJob(command) {
+  const configurationSelected = command === 'configuration';
+  const configSelected = command === 'config';
+  const setDefaultSelected = command === 'default';
+  const addRecordSelected = command === 'addRecords';
+  const removeRecordSelected = command === 'removeRecords';
+  const syncSelected = command === 'sync';
+  const syncOnIpSelected = command === 'syncOnIpChange';
+  const helpSelected = command === 'help';
 
-  if (configurationSelected) {
+  const defaultSelected = command === undefined;
+
+  if(helpSelected) {
+    showUsage();
+  } else if (configurationSelected) {
     setConfig();
   } else if (configSelected) {
     showConfig();
-  } else if (syncSelected) {
-    sync();
+  } else if (setDefaultSelected) {
+    setDefault();
   } else if (addRecordSelected) {
     addRecords();
   } else if (removeRecordSelected) {
     removeRecords();
+  }  else if (syncSelected) {
+    sync();
+  } else if (syncOnIpSelected) {
+    syncOnIpChange();
+  } else if (defaultSelected) {
+    runDefaultCommand();
   } else {
     showUsage();
   }
@@ -46,13 +60,23 @@ function evaluateJob() {
 
 function showUsage() {
   console.log(
-`Usage:
+`
+Usage:
+
+  cds
+    This runs the default command, if set.
+
+  cds help
+    Shows usage of Cloudflare-DDNS-Sync-CLI.
 
   cds configuration
     Start the configuration tool of Cloudflare-DDNS-Sync.
 
   cds config
     Show the configuration of Cloudflare-DDNS-Sync.
+
+  cds default
+    Sets the default command.
 
   cds addRecords
     Add a record to the existing configuration.
@@ -62,7 +86,90 @@ function showUsage() {
 
   cds sync <ip>
     Sync the DNS Record. If the ip is not set it will simply use your external ip.
+
+  cds syncOnIpChange
+    Sync the DNS Record every time your external ip differs from these from the configured records.
 `);
+}
+
+function runDefaultCommand() {
+  if(defaultCommand === undefined) {
+    console.log(`Please set the default command first. To do so run 'cds default'`);
+
+    return;
+  }
+
+  evaluateJob(defaultCommand);
+}
+
+function syncOnIpChange() {
+  const ddnsConfig = getDdnsConfig();
+
+  const configNotSet = ddnsConfig === undefined
+                    || ddnsConfig.auth === undefined;
+
+  if (configNotSet) {
+    console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
+
+    return;
+  }
+
+  const cds = new CloudflareDDNSSync(ddnsConfig);
+  console.log('Cloudflare-DDNS-Sync will now update the DDNS records when needed...');
+
+  cds.syncOnIpChange(async (response) => {
+    const results = await response;
+
+    for(const result of results) {
+      console.log(result);
+    }
+  });
+}
+
+async function setDefault() {
+  console.log(
+`
+ID | Command
+0    none
+1    sync [ip]
+2    syncOnIpChange
+`
+  );
+
+  const defaultCommandIsSet = defaultCommand !== undefined;
+  if(defaultCommandIsSet) {
+    console.log(`The current default function is '${defaultCommand}'. Press 'CTRL + C' or enter nothing to keep it.`);
+  }
+
+  const readline = createReadline();
+  const command = await getDefaultCommand(readline);
+  readline.close();
+
+  defaultCommand = command;
+
+  storage.set('defaultCommand', command);
+}
+
+async function getDefaultCommand(readline) {
+  const defaultCommandIndex = (await ask(readline, "Which command would you like to set as default (when running 'cds')?")).replace(whitespaceRegex, '');
+
+  const defaultCommandIsNone = defaultCommandIndex === '0' || defaultCommandIndex === '';
+  const defaultCommandIsSync = defaultCommandIndex === '1';
+  const defaultCommandIsSyncOnIp = defaultCommandIndex === '2';
+
+  if (defaultCommandIsNone) {
+    return undefined;
+
+  } else if (defaultCommandIsSync) {
+    const ip = await ask(readline, "Please enter an IP that should be used or leave this empty if it should get your external IP.");
+
+    return `sync ${ip}`.replace(whitespaceRegex, '');
+  } else if (defaultCommandIsSyncOnIp) {
+    return 'syncOnIpChange';
+
+  } else {
+    return getDefaultCommand(readline);
+  }
 }
 
 function sync() {
@@ -70,6 +177,7 @@ function sync() {
 
   const configNotSet = ddnsConfig === undefined
                     || ddnsConfig.auth === undefined;
+
   if (configNotSet) {
     console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
 
@@ -78,7 +186,7 @@ function sync() {
 
   const cds = new CloudflareDDNSSync(ddnsConfig);
 
-  const ipAddressNotGiven = args.length < 2;
+  const ipAddressNotGiven = args.length < 1;
 
   if (ipAddressNotGiven) {
     cds.sync()
@@ -91,7 +199,7 @@ function sync() {
     return;
   }
 
-  const ip = args[1];
+  const ip = args[0];
 
   const ipAddressInvalid = ip.match(ipRegex) === null;
   if (ipAddressInvalid) {

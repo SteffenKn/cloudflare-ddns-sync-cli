@@ -1,6 +1,6 @@
 {
   "name": "cloudflare-ddns-sync-cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A CLI for the package Cloudflare-DDNS-Sync.",
   "main": "cloudflare-ddns-sync-cli.js",
   "bin": {
