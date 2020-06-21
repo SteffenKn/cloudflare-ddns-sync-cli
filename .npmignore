@@ -1,4 +1,11 @@
-node_modules/
+.github/
+src/
+dist/tests
+coverage/
 
+package-lock.json
+tsconfig.json
+tslint.json
+Jenkinsfile
 cloudflare-config.json
 .DS_STORE

@@ -1,31 +1,41 @@
 {
   "name": "cloudflare-ddns-sync-cli",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "A CLI for the package Cloudflare-DDNS-Sync.",
-  "main": "cloudflare-ddns-sync-cli.js",
+  "main": "dist/cloudflare-ddns-sync-cli.js",
   "bin": {
-    "cds": "./cloudflare-ddns-sync-cli.js"
+    "cds": "./dist/cloudflare-ddns-sync-cli.js"
   },
+  "author": "Steffen Knaup",
+  "license": "ISC",
+  "keywords": [
+    "cloudflare",
+    "cddnss",
+    "ddns",
+    "dns",
+    "dyndns",
+    "sync",
+    "cli"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Steffen982/cloudflare-ddns-sync-cli.git"
   },
-  "keywords": [
-    "cloudflare",
-    "ddns",
-    "sync",
-    "cli",
-    "cloudflare",
-    "ddns"
-  ],
-  "author": "Steffen Knaup",
-  "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --project ."
+  },
   "bugs": {
     "url": "https://github.com/Steffen982/cloudflare-ddns-sync-cli/issues"
   },
   "homepage": "https://github.com/Steffen982/cloudflare-ddns-sync-cli#readme",
   "dependencies": {
-    "cloudflare-ddns-sync": "^1.5.3",
-    "data-store": "^3.1.0"
+    "cloudflare-ddns-sync": "2.0.2",
+    "data-store": "4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "12.12.6",
+    "tslint": "6.1.2",
+    "typescript": "3.9.5"
   }
 }
