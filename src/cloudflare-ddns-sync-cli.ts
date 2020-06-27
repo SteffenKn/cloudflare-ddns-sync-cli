@@ -37,7 +37,9 @@ function evaluateJob(command: string): void {
   } else if (removeRecordSelected) {
     removeRecords();
   }  else if (syncSelected) {
-    sync();
+    const ip: string = command.split(' ')[1];
+
+    sync(ip);
   } else if (syncOnIpSelected) {
     syncOnIpChange();
   } else if (defaultSelected) {
@@ -160,7 +162,7 @@ async function getDefaultCommand(readline: Readline.Interface): Promise<string> 
   }
 }
 
-function sync(): void {
+function sync(ip?: string): void {
   const ddnsConfig: DdnsConfig = getDdnsConfig();
 
   const configNotSet: boolean = ddnsConfig === undefined
@@ -174,8 +176,7 @@ function sync(): void {
 
   const cds: CloudflareDDNSSync = new CloudflareDDNSSync(ddnsConfig.auth.email, ddnsConfig.auth.key);
 
-  const ipAddressNotGiven: boolean = args.length < 1;
-
+  const ipAddressNotGiven: boolean = args.length < 1 && !ip;
   if (ipAddressNotGiven) {
     cds.syncRecords(ddnsConfig.records)
     .then((results: Array<RecordData>): void => {
@@ -187,11 +188,11 @@ function sync(): void {
     return;
   }
 
-  const ip: string = args[0];
+  const ipToUse: string = args[0] || ip;
 
-  const ipAddressInvalid: boolean = ip.match(ipRegex) === null;
+  const ipAddressInvalid: boolean = ipToUse.match(ipRegex) === null;
   if (ipAddressInvalid) {
-    console.log(`'${ip}' is not a valid ip adress.`);
+    console.log(`'${ipToUse}' is not a valid ip adress.`);
 
     return;
   }
