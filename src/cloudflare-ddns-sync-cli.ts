@@ -138,7 +138,7 @@ ID | Command
 }
 
 async function getDefaultCommand(readline: Readline.Interface): Promise<string> {
-  const defaultCommandAnswer: string = await ask(readline, 'Which command would you like to set as default (when running \'cds\')?');
+  const defaultCommandAnswer: string = await ask(readline, 'Which command would you like to set as default (when running \'cds\')?\n');
   const defaultCommandIndex: string = defaultCommandAnswer.replace(whitespaceRegex, '');
 
   const defaultCommandIsNone: boolean = defaultCommandIndex === '0' || defaultCommandIndex === '';
@@ -149,9 +149,9 @@ async function getDefaultCommand(readline: Readline.Interface): Promise<string> 
     return undefined;
 
   } else if (defaultCommandIsSync) {
-    const ip: string = await ask(readline, 'Please enter an IP that should be used or leave this empty if it should get your external IP.');
+    const ip: string = await ask(readline, 'Please enter an IP that should be used or leave this empty if it should get your external IP.\n');
 
-    return `sync ${ip}`.replace(whitespaceRegex, '');
+    return 'sync ' + `${ip}`.replace(whitespaceRegex, '');
   } else if (defaultCommandIsSyncOnIp) {
     return 'syncOnIpChange';
 
