@@ -1,4 +1,4 @@
-#!/usr/bin / env; node;
+#!/usr/bin/env node
 import CloudflareDDNSSync, {Record, RecordData} from 'cloudflare-ddns-sync';
 import Storage from 'data-store';
 import Readline from 'readline';
