@@ -18,7 +18,7 @@ function evaluateJob(command: string): void {
   const setDefaultSelected: boolean = command === 'default';
   const addRecordSelected: boolean = command === 'addRecords';
   const removeRecordSelected: boolean = command === 'removeRecords';
-  const syncSelected: boolean = command === 'sync';
+  const syncSelected: boolean = command && command.startsWith('sync');
   const syncOnIpSelected: boolean = command === 'syncOnIpChange';
   const helpSelected: boolean = command === 'help';
 
