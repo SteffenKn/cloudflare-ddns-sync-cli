@@ -37,7 +37,6 @@ After installation, simply run `cds configuration` in your terminal to set up Cl
 Then you can run `cds sync` to sync the records that were configured earlier.
 If you run the command with a valid ip like `cds sync 8.8.8.8` Cloudflare-DDNS-Sync will use the ip. Otherwise it will use your external ip.
 
-
 ## Commands
 
 - cds help
@@ -80,6 +79,7 @@ Remove a record from the existing configuration
 Sync the DNS Records. If the ip is not set it will simply use your external ip.
 
 For example:
+
 ```
   cds sync 8.8.8.8
 ```

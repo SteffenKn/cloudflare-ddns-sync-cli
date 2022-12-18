@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 import CloudflareDDNSSync, {Record, RecordData} from 'cloudflare-ddns-sync';
-import Storage from 'data-store';
 import Readline from 'readline';
+import Storage from 'data-store';
 
 import {emailRegex, ipRegex, whitespaceRegex} from './regex';
 import {DdnsConfig} from './types/index';
 
-const storage: Storage = new Storage({ name: 'cloudflareConfig' });
-const [, , cmd, ...args] = process.argv;
+const storage: Storage = new Storage({name: 'cloudflareConfig'});
+const [
+  , , cmd,
+  ...args
+] = process.argv;
 let defaultCommand: string = storage.get('defaultCommand');
 
 evaluateJob(cmd);
@@ -36,8 +39,8 @@ function evaluateJob(command: string): void {
     addRecords();
   } else if (removeRecordSelected) {
     removeRecords();
-  }  else if (syncSelected) {
-    const ip: string = command.split(' ')[1];
+  } else if (syncSelected) {
+    const ip = command.split(' ')[1];
 
     sync(ip);
   } else if (syncOnIpSelected) {
@@ -50,8 +53,7 @@ function evaluateJob(command: string): void {
 }
 
 function showUsage(): void {
-  console.log(
-`
+  console.log(`
 Usage:
 
   cds
@@ -85,7 +87,7 @@ Usage:
 
 function runDefaultCommand(): void {
   if (defaultCommand === undefined) {
-    console.log(`Please set the default command first. To do so run 'cds default'`);
+    console.log('Please set the default command first. To do so run \'cds default\'');
 
     return;
   }
@@ -93,14 +95,14 @@ function runDefaultCommand(): void {
   evaluateJob(defaultCommand);
 }
 
-function syncOnIpChange(): void {
+function syncOnIpChange(): void {
   const ddnsConfig: DdnsConfig = getDdnsConfig();
 
   const configNotSet: boolean = ddnsConfig === undefined
                              || ddnsConfig.auth === undefined;
 
   if (configNotSet) {
-    console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
+    console.log('You did not configure Cloudflare-DDNS-Sync yet. Please run \'cds configuration\' first.');
 
     return;
   }
@@ -108,22 +110,20 @@ function syncOnIpChange(): void {
   const cds: CloudflareDDNSSync = new CloudflareDDNSSync(ddnsConfig.auth.email, ddnsConfig.auth.key);
   console.log('Cloudflare-DDNS-Sync will now update the DDNS records when needed...');
 
-  cds.syncOnIpChange(ddnsConfig.records, async(results: Array<RecordData>): Promise<void> => {
+  cds.syncOnIpChange(ddnsConfig.records, (results: Array<RecordData>): void => {
     for (const result of results) {
-      console.log(result);
+      console.log(`"${result.name}" was synced successfully. (ip: ${result.content})`);
     }
   });
 }
 
 async function setDefault(): Promise<void> {
-  console.log(
-`
+  console.log(`
 ID | Command
 0    none
 1    sync [ip]
 2    syncOnIpChange
-`,
-  );
+`);
 
   const defaultCommandIsSet: boolean = defaultCommand !== undefined;
   if (defaultCommandIsSet) {
@@ -134,6 +134,7 @@ ID | Command
   const command: string = await getDefaultCommand(readline);
   readline.close();
 
+  // eslint-disable-next-line require-atomic-updates
   defaultCommand = command;
 
   storage.set('defaultCommand', command);
@@ -149,17 +150,14 @@ async function getDefaultCommand(readline: Readline.Interface): Promise<string> 
 
   if (defaultCommandIsNone) {
     return undefined;
-
   } else if (defaultCommandIsSync) {
     const ip: string = await ask(readline, 'Please enter an IP that should be used or leave this empty if it should get your external IP.\n');
 
-    return 'sync ' + `${ip}`.replace(whitespaceRegex, '');
+    return `sync ${`${ip}`.replace(whitespaceRegex, '')}`;
   } else if (defaultCommandIsSyncOnIp) {
     return 'syncOnIpChange';
-
-  } else {
-    return getDefaultCommand(readline);
   }
+  return getDefaultCommand(readline);
 }
 
 function sync(ip?: string): void {
@@ -169,7 +167,7 @@ function sync(ip?: string): void {
                              || ddnsConfig.auth === undefined;
 
   if (configNotSet) {
-    console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
+    console.log('You did not configure Cloudflare-DDNS-Sync yet. Please run \'cds configuration\' first.');
 
     return;
   }
@@ -179,11 +177,11 @@ function sync(ip?: string): void {
   const ipAddressNotGiven: boolean = args.length < 1 && !ip;
   if (ipAddressNotGiven) {
     cds.syncRecords(ddnsConfig.records)
-    .then((results: Array<RecordData>): void => {
-      for (const result of results) {
-        console.log(result);
-      }
-    });
+      .then((results: Array<RecordData>): void => {
+        for (const result of results) {
+          console.log(result);
+        }
+      });
 
     return;
   }
@@ -198,11 +196,11 @@ function sync(ip?: string): void {
   }
 
   cds.syncRecords(ddnsConfig.records, ip)
-  .then((results: Array<RecordData>): void => {
-    for (const result of results) {
-      console.log(result);
-    }
-  });
+    .then((results: Array<RecordData>): void => {
+      for (const result of results) {
+        console.log(result);
+      }
+    });
 }
 
 function showConfig(): void {
@@ -212,7 +210,7 @@ function showConfig(): void {
                                     || currentConfiguration.auth === undefined;
 
   if (configurationNotSet) {
-    console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
+    console.log('You did not configure Cloudflare-DDNS-Sync yet. Please run \'cds configuration\' first.');
 
     return;
   }
@@ -228,9 +226,7 @@ async function setConfig(): Promise<void> {
   const domain: string = await getDomain(readline);
 
   const recordNames: Array<string> = await getRecords(readline, domain);
-  const records: Array<Record> = recordNames.map((recordName: string): Record => {
-    return getRecordFromString(recordName);
-  });
+  const records: Array<Record> = recordNames.map((recordName: string): Record => getRecordFromString(recordName));
 
   readline.close();
 
@@ -245,7 +241,7 @@ async function setConfig(): Promise<void> {
 
   storage.set('cloudflareConfig', ddnsConfig);
 
-  console.log(`Youre Configuration was successfully stored.`);
+  console.log('Youre Configuration was successfully stored.');
 }
 
 async function addRecords(): Promise<void> {
@@ -254,34 +250,35 @@ async function addRecords(): Promise<void> {
   const configNotSet: boolean = ddnsConfig === undefined
                     || ddnsConfig.auth === undefined;
   if (configNotSet) {
-    console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
+    console.log('You did not configure Cloudflare-DDNS-Sync yet. Please run \'cds configuration\' first.');
 
     return;
   }
 
-  const domain: string = ddnsConfig.domain;
+  const {domain} = ddnsConfig;
   const readline: Readline.Interface = createReadline();
 
   const recordNamesToAddString: string = await ask(readline, 'Please enter all records that should be added. Seperate them with a comma (,):\n');
   const recordNamesToAdd: Array<string> = recordNamesToAddString.replace(whitespaceRegex, '').split(',');
   const recordsToAdd: Array<Record> = recordNamesToAdd.map((recordName: string): Record => {
+    let recordNameToUse = recordName;
+
     const recordNameIsEmpty: boolean = recordName.trim() === '';
     if (recordNameIsEmpty) {
-      recordName = domain;
+      recordNameToUse = domain;
     } else {
-      recordName += `.${domain}`;
+      recordNameToUse += `.${domain}`;
     }
 
-    return getRecordFromString(recordName);
+    return getRecordFromString(recordNameToUse);
   });
 
   readline.close();
 
   ddnsConfig.records = ddnsConfig.records.concat(recordsToAdd);
 
-  ddnsConfig.records = ddnsConfig.records.filter((record: Record, recordIndex: number): boolean => {
-      return ddnsConfig.records.indexOf(record) === recordIndex;
-  });
+  ddnsConfig.records = ddnsConfig.records
+    .filter((record, recordIndex) => ddnsConfig.records.indexOf(record) === recordIndex);
 
   storage.set('cloudflareConfig', ddnsConfig);
 
@@ -295,28 +292,31 @@ async function removeRecords(): Promise<void> {
                              || ddnsConfig.auth === undefined;
 
   if (configNotSet) {
-    console.log(`You did not configure Cloudflare-DDNS-Sync yet. Please run 'cds configuration' first.`);
+    console.log('You did not configure Cloudflare-DDNS-Sync yet. Please run \'cds configuration\' first.');
 
     return;
   }
 
-  const records: Array<Record> = ddnsConfig.records;
+  const {records} = ddnsConfig;
 
   console.log('These records are existing:\n\nID | Record');
 
-  for (const recordIndex in records) {
-    console.log(`${recordIndex}   ${records[recordIndex]}`);
+  for (const recordKey of Object.keys(records)) {
+    console.log(`${recordKey}   ${records[recordKey]}`);
   }
 
-  const readline: Readline.Interface = createReadline();
-  const recordIdsToRemoveString: string = await ask(readline, '\nPlease enter the ID of the records that should get removed. Seperate them with a comma (,):\n');
-  const recordIdsToRemove: Array<string> = recordIdsToRemoveString.replace(whitespaceRegex, '').split(',');
+  const readline = createReadline();
+
+  const recordIdsToRemoveString
+    = await ask(readline, '\nPlease enter the ID of the records that should get removed. Seperate them with a comma (,):\n');
+
+  const recordIdsToRemove = recordIdsToRemoveString.replace(whitespaceRegex, '').split(',');
 
   readline.close();
 
   for (const recordId of recordIdsToRemove) {
     try {
-      records.splice(parseInt(recordId), 1);
+      records.splice(parseInt(recordId, 10), 1);
     } catch {
       throw new Error(`'${recordId}' is not a valid id.`);
     }
@@ -346,11 +346,11 @@ async function getEmail(readline: Readline.Interface): Promise<string> {
   return email;
 }
 
-async function getAuthKey(readline: Readline.Interface): Promise<string> {
-  return await ask(readline, 'Please enter your cloudflare authkey (How you can get it is described in the README):\n');
+function getAuthKey(readline: Readline.Interface): Promise<string> {
+  return ask(readline, 'Please enter your cloudflare authkey (How you can get it is described in the README):\n');
 }
 
-async function getDomain(readline: Readline.Interface): Promise<string> {
+function getDomain(readline: Readline.Interface): Promise<string> {
   return ask(readline, 'Please enter your domain:\n');
 }
 
@@ -358,13 +358,13 @@ async function getRecords(readline: Readline.Interface, domain: string): Promise
   const recordString: string = await ask(readline, 'Please enter all records that should get synced. Seperate them by a comma (,):\n');
   const records: Array<string> = recordString.replace(whitespaceRegex, '').split(',');
 
-  for (const recordIndex in records) {
-    const recordIsEmpty: boolean = records[recordIndex] === '';
+  for (const recordKey of Object.keys(records)) {
+    const recordIsEmpty: boolean = records[recordKey] === '';
 
     if (recordIsEmpty) {
-      records[recordIndex] = domain;
+      records[recordKey] = domain;
     } else {
-      records[recordIndex] += `.${domain}`;
+      records[recordKey] += `.${domain}`;
     }
   }
 
@@ -378,8 +378,6 @@ function ask(readline: Readline.Interface, question: string): Promise<string> {
 
       // Create NewLine after answer was entered
       console.log();
-
-      return;
     });
   });
 }

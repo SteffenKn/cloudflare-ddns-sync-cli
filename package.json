@@ -23,7 +23,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "tslint --project ."
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint --fix \"src/**/*.ts\""
   },
   "bugs": {
     "url": "https://github.com/Steffen982/cloudflare-ddns-sync-cli/issues"
@@ -35,7 +36,9 @@
   },
   "devDependencies": {
     "@types/node": "12.12.6",
-    "tslint": "6.1.2",
+    "@typescript-eslint/eslint-plugin": "5.46.1",
+    "@typescript-eslint/parser": "5.46.1",
+    "eslint": "8.30.0",
     "typescript": "3.9.5"
   }
 }
