@@ -20,7 +20,7 @@ records as easy as possible, without the need of any coding experience.
 
 ### Prerequisites
 
-- Node
+- Node (16, 18)
 - Cloudflare Account
 
 ### Installation
@@ -36,7 +36,6 @@ npm install -g cloudflare-ddns-sync-cli
 After installation, simply run `cds configuration` in your terminal to set up Cloudflare-DDNS-Sync.
 Then you can run `cds sync` to sync the records that were configured earlier.
 If you run the command with a valid ip like `cds sync 8.8.8.8` Cloudflare-DDNS-Sync will use the ip. Otherwise it will use your external ip.
-
 
 ## Commands
 
@@ -80,6 +79,7 @@ Remove a record from the existing configuration
 Sync the DNS Records. If the ip is not set it will simply use your external ip.
 
 For example:
+
 ```
   cds sync 8.8.8.8
 ```
@@ -101,6 +101,14 @@ Sync the DNS Records as soon as the external ip differs from the ip set in the c
 - **Copy the API Key**
 
 ## Changelog
+
+### v0.1.1
+
+- ⬆️ Update dependencies
+
+### v0.1.0
+
+- ♻️ **Rewrite Code in TypeScript**
 
 ### v0.0.5
 

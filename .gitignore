@@ -1,4 +1,7 @@
 node_modules/
+dist/
+coverage/
 
+package-lock.json
 cloudflare-config.json
 .DS_STORE
