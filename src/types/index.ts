@@ -1,1 +1,1 @@
-export * from './DdnsConfig';
+export * from './DdnsConfig.js';

@@ -3,8 +3,9 @@ import CloudflareDDNSSync, {Record, RecordData} from 'cloudflare-ddns-sync';
 import Readline from 'readline';
 import Storage from 'data-store';
 
-import {emailRegex, ipRegex, whitespaceRegex} from './regex';
-import {DdnsConfig} from './types/index';
+import {DdnsConfig} from './types/index.js';
+
+import {emailRegex, ipRegex, whitespaceRegex} from './regex.js';
 
 const storage: Storage = new Storage({name: 'cloudflareConfig'});
 const [
@@ -107,7 +108,10 @@ function syncOnIpChange(): void {
     return;
   }
 
-  const cds: CloudflareDDNSSync = new CloudflareDDNSSync(ddnsConfig.auth.email, ddnsConfig.auth.key);
+  const cds: CloudflareDDNSSync = new CloudflareDDNSSync({
+    email: ddnsConfig.auth.email,
+    key: ddnsConfig.auth.key,
+  });
   console.log('Cloudflare-DDNS-Sync will now update the DDNS records when needed...');
 
   cds.syncOnIpChange(ddnsConfig.records, (results: Array<RecordData>): void => {
@@ -172,7 +176,10 @@ function sync(ip?: string): void {
     return;
   }
 
-  const cds: CloudflareDDNSSync = new CloudflareDDNSSync(ddnsConfig.auth.email, ddnsConfig.auth.key);
+  const cds: CloudflareDDNSSync = new CloudflareDDNSSync({
+    email: ddnsConfig.auth.email,
+    key: ddnsConfig.auth.key,
+  });
 
   const ipAddressNotGiven: boolean = args.length < 1 && !ip;
   if (ipAddressNotGiven) {

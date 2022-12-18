@@ -20,7 +20,7 @@ records as easy as possible, without the need of any coding experience.
 
 ### Prerequisites
 
-- Node
+- Node (16, 18)
 - Cloudflare Account
 
 ### Installation

@@ -26,19 +26,20 @@
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint --fix \"src/**/*.ts\""
   },
+  "type": "module",
   "bugs": {
     "url": "https://github.com/Steffen982/cloudflare-ddns-sync-cli/issues"
   },
   "homepage": "https://github.com/Steffen982/cloudflare-ddns-sync-cli#readme",
   "dependencies": {
-    "cloudflare-ddns-sync": "2.0.2",
+    "cloudflare-ddns-sync": "3.0.0",
     "data-store": "4.0.3"
   },
   "devDependencies": {
-    "@types/node": "12.12.6",
+    "@types/node": "18.11.17",
     "@typescript-eslint/eslint-plugin": "5.46.1",
     "@typescript-eslint/parser": "5.46.1",
     "eslint": "8.30.0",
-    "typescript": "3.9.5"
+    "typescript": "4.9.4"
   }
 }
