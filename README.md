@@ -102,6 +102,10 @@ Sync the DNS Records as soon as the external ip differs from the ip set in the c
 
 ## Changelog
 
+### v0.1.1
+
+- ⬆️ Update dependencies
+
 ### v0.1.0
 
 - ♻️ **Rewrite Code in TypeScript**
